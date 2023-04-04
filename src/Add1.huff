@@ -13,5 +13,15 @@
 
 
 #define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload 0xe0 shr
 
+    dup1 __FUNC_SIG(add1) eq validJump jumpi
+
+    0x00 0x00 revert
+
+    validJump:
+        0x04 calldataload   // [value]
+        0x01 add            // [++value]
+        0x00 mstore         // []
+        0x20 0x00 return
 }
