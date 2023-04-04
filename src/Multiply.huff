@@ -9,9 +9,32 @@
  *  NOTICE: The contract should revert when an unrecognized function is called
  */
 
+#define constant MAX_UINT = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFe
+
 #define function multiply(uint256, uint256) payable returns(uint256)
 
 
-#define macro MAIN() = takes(0) returns(0) {
 
+#define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload 0xe0 shr
+    dup1 __FUNC_SIG(multiply) eq multiplyJump jumpi
+
+    0x00 0x00 revert
+
+    multiplyJump:
+        0x04 calldataload       // [a]
+        [MAX_UINT]              // [max, a]
+        dup2                    // [a, max, a]
+        gt overflow jumpi       // [a]     
+        0x24 calldataload       // [b, a]
+        [MAX_UINT]              // [max, b, a]
+        dup2                    // [b, max, b, a]
+        gt overflow jumpi       // [b, a]
+
+        mul                     // [b*a]
+        0x00 mstore             // []
+        0x20 0x00 return
+
+        overflow:
+            0x00 0x00 revert
 }
