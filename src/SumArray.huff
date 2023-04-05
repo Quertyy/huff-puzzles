@@ -12,5 +12,50 @@
 
 
 #define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload 0xe0 shr
+    dup1 __FUNC_SIG(sumArray) eq sumJump jumpi
+    0x00 0x00 revert
 
+    sumJump:
+        0x00                            // [sum]
+        0x24 calldataload               // [values.length, sum]
+        0x04 0x40 add                   // [&values, values.length, sum]
+        swap1                           // [values.length, &values, sum]
+
+        // loop over the array
+        0x00                            // [i, values.length, &values, sum]
+        loop:
+            dup2 dup2                   // [i, values.length, i, values.length, &values, sum]
+            // Exit loop if finished
+            eq exit jumpi               // [i, values.length, &values, sum]
+            swap2                       // [&values, values.length, i, sum]
+            dup1                        // [&values, &values, values.length, i, sum]
+            calldataload                // [values[i], &values, values.length, i, sum]
+            swap1 0x20 add              // [&values++, values[i], values.length, i, sum]
+            swap4                       // [sum, values[i], values.length, i, &values++]
+            add                         // [new_sum, values.length, i, &values++]
+            swap3 swap2                 // [i, values.length, &values++, new_sum]
+            
+            0x01 add                     // [i++, values.length, &values++, new_sum]
+            loop jump
+        exit:
+        pop pop pop                     // [sum]
+        0x00 mstore
+        0x20 0x00 return
 }
+
+// [2, 4, 262, 8, 4, 1, 0, 17, 67251781, 27]
+// 
+// 0x0194db8e
+// 0000000000000000000000000000000000000000000000000000000000000020    0x04
+// 000000000000000000000000000000000000000000000000000000000000000a    0x24
+// 0000000000000000000000000000000000000000000000000000000000000002    0x44
+// 0000000000000000000000000000000000000000000000000000000000000004
+// 0000000000000000000000000000000000000000000000000000000000000106
+// 0000000000000000000000000000000000000000000000000000000000000008
+// 0000000000000000000000000000000000000000000000000000000000000004
+// 0000000000000000000000000000000000000000000000000000000000000001
+// 0000000000000000000000000000000000000000000000000000000000000000
+// 0000000000000000000000000000000000000000000000000000000000000011
+// 0000000000000000000000000000000000000000000000000000000004022e45
+// 000000000000000000000000000000000000000000000000000000000000001b
