@@ -8,6 +8,9 @@
  */
 
 
- #define macro MAIN() = takes(0) returns(0) {
-    
- }
+#define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload
+    dup1
+    calldataload            // [length, offset]
+    swap1 0x20 add calldataload
+}
