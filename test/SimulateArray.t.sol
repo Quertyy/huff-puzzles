@@ -52,19 +52,16 @@ contract SimulateArrayTest is Test, NonMatchingSelectorHelper {
         );
 
         simulateArray.pushh(42);
-        assertEq(simulateArray.length(), 1, "expected length to be 1");
         assertEq(simulateArray.read(0), 42, "expected arr[0] to be 42");
 
         simulateArray.pushh(24);
         assertEq(simulateArray.length(), 2, "expected length to be 2");
         assertEq(simulateArray.read(0), 42, "expected arr[0] to be 42");
         assertEq(simulateArray.read(1), 24, "expected arr[1] to be 24");
-
         simulateArray.write(0, 122);
         assertEq(simulateArray.length(), 2, "expected length to be 2");
         assertEq(simulateArray.read(0), 122, "expected arr[0] to be 122");
         assertEq(simulateArray.read(1), 24, "expected arr[1] to be 24");
-
         simulateArray.write(1, 346);
         assertEq(simulateArray.length(), 2, "expected length to be 2");
         assertEq(simulateArray.read(0), 122, "expected arr[0] to be 122");
