@@ -13,5 +13,36 @@
 
 
  #define macro MAIN() = takes(0) returns(0) {
-    
+    0x00 calldataload 0xe0 shr
+    dup1 __FUNC_SIG(makeContract) eq contractJump jumpi
+    0x00 dup1 revert
+
+    contractJump:
+        __RIGHTPAD(0x600c80600b6000396000f3620caffe60005260206000f3)
+        0x00 mstore                 // []
+        0x17 0x00 0x00              // [value, offset, contractCodeSize]
+        create                      // [addresss]
+        0x00 mstore                 // []
+        0x20 0x00 return            // []
+
  }
+
+// runtime code
+ // PUSH3 0x0caffe
+ // PUSH1 0x00
+ // MSTORE
+ // PUSH1 0x20
+ // PUSH1 0x00
+ // RETURN
+ // 0x620caffe60005260206000f3
+
+// PUSH1 0x0c
+// DUP1
+// PUSH1 0x0b
+// PUSH1 0x00
+// CODECOPY
+// PUSH1 0x00
+// RETURN
+// 0x600c80600b6000396000f3
+
+// contract code : 0x600c80600b6000396000f3620caffe60005260206000f3
