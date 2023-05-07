@@ -14,5 +14,37 @@
 
 
  #define macro MAIN() = takes(0) returns(0) {
-   
+    0x00 calldataload 0xe0 shr
+    dup1 __FUNC_SIG(distribute) eq distJump jumpi
+    0x00 dup1 revert
+
+    distJump:
+        address balance             // [balance]
+        0x24 calldataload           // [array.length, balance]
+        dup1 iszero                 // [array.length == 0, array.length, balance]
+        error jumpi                 // [array.length, balance]
+        dup1 swap2                  // [balance, array.length, array.length]
+        div                         // [value, length]
+        0x20 mstore                 // [length]
+        
+        0x00                        // [i, length]
+        loop:
+            dup2 dup2               // [i, length, i, length]
+            eq exit jumpi           // [i, length]
+            dup1 0x20 mul           // [i*32, i, length]
+            0x44 add calldataload   // [to, i, length]
+            0x00 0x00 0x00          // [arOst, argLen, retOst, to, i, length]
+            0x20 mload              // [value, arOst, argLen, retOst, to, i, length]
+            0x32 swap5              // [to, value, argOst, argLen, retOst, retLen, i, length]
+            gas call                // [i, length]
+            pop
+            0x01 add                // [i++, length]
+            loop jump
+
+    exit:
+        0x00 0x00 return
+
+    error:
+        pop pop
+        0x00 dup1 revert
  }
