@@ -7,6 +7,28 @@
 
 #define function donated(address) payable returns(uint256)
 
+#define constant USER = FREE_STORAGE_POINTER()
+
 #define macro MAIN() = takes(0) returns(0) {
-    
+    0x00 calldataload 0xe0 shr
+    dup1 __FUNC_SIG(donated) eq donatedJump jumpi
+    callvalue iszero end jumpi
+
+    caller 0x00 mstore
+    0x20 0x00 sha3          // [&user]
+    dup1 sload              // [balance[user], &user]
+    callvalue add           // [value+balance[user], &user]
+    swap1 sstore            // []
+    0x00 0x00 return
+
+    donatedJump:
+        caller 0x00 mstore  // []
+        0x20 0x00 sha3      // [&user]
+        sload               // [balance[user]]
+        0x00 mstore         // []
+        0x20 0x00 return    //
+
+    end:
+        0x00 0x00 return
 }
+
