@@ -2,6 +2,10 @@
 
 A series of puzzles that go from very easy to more difficult so that you can have a hands-on introduction to the [huff language](https://huff.sh) and learn EVM bytecode while doing it.
 
+
+## Status
+Completed
+
 ## Pre-requisites
 
 Make sure you've installed the Huff Compiler as outlined in the [Huff Docs](https://docs.huff.sh/get-started/installing/#installing-huff).
